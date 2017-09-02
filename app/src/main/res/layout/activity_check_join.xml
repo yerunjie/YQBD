@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_check_join"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        tools:context="com.yqbd.yqbd.activities.group.CheckJoinActivity">
+    <TextView android:id="@+id/text_group_apply"
+              android:text="申请加入的小组："
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/text_candidate_name_apply"
+              android:text="申请人姓名："
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"/>
+    <Button android:id="@+id/btn_pass_join"
+            android:text="通过申请"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <Button android:id="@+id/btn_reject_join"
+            android:text="拒绝申请"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+</LinearLayout>

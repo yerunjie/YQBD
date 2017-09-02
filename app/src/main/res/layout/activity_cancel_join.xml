@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_cancel_join"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="com.yqbd.yqbd.activities.group.ApplyJoinActivity">
+    <TextView android:id="@+id/text_groupToCancel_title"
+              android:text="组名："
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/text_companyToCancel_name"
+              android:text="公司："
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/text_groupToCancel_description"
+              android:text="小组描述："
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/text_groupToCancel_max_people_num"
+              android:text="最大成员数："
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/text_groupToCancel_current_people_num"
+              android:text="已有成员数："
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"/>
+    <Button android:id="@+id/btn_cancel_join"
+            android:text="取消加入申请"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+
+</LinearLayout>
+
