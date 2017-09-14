@@ -12,17 +12,19 @@ import android.view.View.OnKeyListener;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import com.yqbd.yqbd.R;
+import com.yqbd.yqbd.fragments.filter.FilterFragment;
 import com.yqbd.yqbd.fragments.filter.adapter.GoodsAttrListAdapter;
 import com.yqbd.yqbd.fragments.filter.adapter.GoodsAttrsAdapter;
 import com.yqbd.yqbd.fragments.filter.vo.SaleAttributeNameVo;
 import com.yqbd.yqbd.fragments.filter.vo.SaleAttributeVo;
-import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 筛选商品属性选择的popupwindow
@@ -31,7 +33,7 @@ public class FilterPopupWindow extends PopupWindow {
     private View contentView;
     private Context context;
     private View goodsNoView;
-
+    JSONArray json = null;
     private GridView serviceGrid;
     private ListView selectionList;
     private TextView filterReset;
@@ -40,12 +42,13 @@ public class FilterPopupWindow extends PopupWindow {
     private GoodsAttrsAdapter serviceAdapter;
     private List<SaleAttributeNameVo> itemData;
     private List<SaleAttributeVo> serviceList;
+    private HashMap<String,String> classification;
     private String[] serviceStr = new String[]{"仅看有货", "促销", "手机专享"};
 
     /**
      * 商品属性选择的popupwindow
      */
-    public FilterPopupWindow(final Activity context) {
+    public FilterPopupWindow(final Activity context,JSONArray json) {
         this.context = context;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         contentView = inflater.inflate(R.layout.popup_goods_details, null);
@@ -94,7 +97,7 @@ public class FilterPopupWindow extends PopupWindow {
         itemData = new ArrayList<SaleAttributeNameVo>();
         adapter = new GoodsAttrListAdapter(context, itemData);
         selectionList.setAdapter(adapter);
-        String str = "["
+        final String str = "["
                 + "{\"nameId\":\"V2QASD\",\"saleVo\":["
                 + "{\"value\":\"2核\",\"goods\":null,\"goodsAndValId\":\"C6VOWQ\",\"checkStatus\":\"1\"},"
                 + "{\"value\":\"4核\",\"goods\":null,\"goodsAndValId\":\"C6VOWQ\",\"checkStatus\":\"0\"},"
@@ -126,9 +129,9 @@ public class FilterPopupWindow extends PopupWindow {
                 + "{\"value\":\"5.5英寸\",\"goods\":null,\"goodsAndValId\":\"C6VOWQ\",\"checkStatus\":\"0\"},"
                 + "{\"value\":\"6英寸\",\"goods\":null,\"goodsAndValId\":\"C6VOWQ\",\"checkStatus\":\"1\"}"
                 + "],\"name\":\"尺寸\"}" + "]";
-        JSONArray json = null;
+
         try {
-            json = new JSONArray(str);
+            this.json = json;
             refreshAttrs(json);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -154,16 +157,32 @@ public class FilterPopupWindow extends PopupWindow {
                 List<String> strings=new ArrayList<>();
                 for (int i = 0; i < itemData.size(); i++) {
                     for (int j = 0; j < itemData.get(i).getSaleVo().size(); j++) {
+
                         if (itemData.get(i).getSaleVo().get(j).isChecked()) {
                             strings.add(itemData.get(i).getSaleVo().get(j).getValue()) ;
                         }
                     }
                 }
+                Map<String,List<String>> map =new HashMap<>();
+                for(String string:strings){
+                    String first=string;
+                    String second=classification.get(string);
+                    if(map.containsKey(second))
+                        map.get(second).add(first);
+                    else{
+                        map.put(second,new ArrayList<String>());
+                        map.get(second).add(first);
+                    }
+                }
                 //Toast.makeText(FilterPopupWindow.this.context, str, Toast.LENGTH_SHORT).show();
+                System.out.println("map:"+map);
+                System.out.println("strings:"+strings);
                 dismiss();
-                EventBus.getDefault().post(strings);
+                FilterFragment.postSearch(strings);
+                // EventBus.getDefault().post(strings);
             }
         });
+
 
         this.setContentView(contentView);
         this.setWidth(LayoutParams.MATCH_PARENT);
@@ -184,28 +203,32 @@ public class FilterPopupWindow extends PopupWindow {
      */
     public void refreshAttrs(JSONArray json) throws JSONException {
         itemData.clear();
+        classification=new HashMap<>();
         for (int i = 0; i < json.length(); i++) {
             SaleAttributeNameVo saleName = new SaleAttributeNameVo();
             JSONObject obj = (JSONObject) json.opt(i);
             saleName.setName(obj.getString("name"));
             List<SaleAttributeVo> list = new ArrayList<SaleAttributeVo>();
-            JSONArray array = obj.getJSONArray("saleVo");
+            JSONArray array = obj.getJSONArray("types");
             for (int j = 0; j < array.length(); j++) {
                 JSONObject object = array.getJSONObject(j);
                 SaleAttributeVo vo = new SaleAttributeVo();
-                vo.setGoods(object.getString("goods"));
-                vo.setValue(object.getString("value"));
-                vo.setGoodsAndValId(object.getString("goodsAndValId"));
-                if ("1".equals(object.getString("checkStatus"))) {
-                    vo.setChecked(true);
-                } else {
-                    vo.setChecked(false);
-                }
+                vo.setGoods(null);
+
+                vo.setValue(object.getString("typeName"));
+                vo.setGoodsAndValId(object.getString("typeId"));
+                classification.put(object.getString("typeName"),obj.getString("name"));
+//                if ("1".equals(object.getString("checkStatus"))) {
+//                    vo.setChecked(true);
+//                } else {
+                vo.setChecked(false);
+//                }
                 list.add(vo);
             }
             saleName.setSaleVo(list);
             // 是否展开
             saleName.setNameIsChecked(false);
+
             itemData.add(saleName);
         }
         adapter.notifyDataSetChanged();
