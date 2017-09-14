@@ -2,7 +2,6 @@ package com.yqbd.yqbd.beans;
 
 import com.yqbd.yqbd.tagview.widget.Tag;
 import com.yqbd.yqbd.utils.MyJsonObject;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,13 +55,13 @@ public class TaskBean {
     }
     public TaskBean(){}
     public static TaskBean newInstance(JSONObject jsonObject) throws  JSONException{
-       TaskBean taskBean = MyJsonObject.toBean(jsonObject, TaskBean.class);
-       taskBean.setTypeBeans(new ArrayList<TypeBean>());
-        JSONArray jsonArray = jsonObject.getJSONArray("typeBeans");
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject tempJsonObject = jsonArray.getJSONObject(i);
-            taskBean.getTypeBeans().add(new TypeBean(tempJsonObject));
-        }
+        TaskBean taskBean = MyJsonObject.toBean(jsonObject, TaskBean.class);
+        taskBean.setTypeBeans(new ArrayList<TypeBean>());
+        //   JSONArray jsonArray = jsonObject.getJSONArray("typeBeans");
+        //     for (int i = 0; i < jsonArray.length(); i++) {
+        //       JSONObject tempJsonObject = jsonArray.getJSONObject(i);
+        //      taskBean.getTypeBeans().add(new TypeBean(tempJsonObject));
+        //   }
         return taskBean;
     }
     public Integer getTaskId() {
